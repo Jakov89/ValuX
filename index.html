@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValuX - Stock Analyzer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="bg-primary text-white text-center p-4">
+        <div class="container">
+            <h1>ValuX</h1>
+            <p class="lead">Modern Stock Analyzer</p>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <!-- Search Section -->
+        <section class="card mb-4" id="searchSection">
+            <div class="card-body">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="compareToggle">
+                    <label class="form-check-label" for="compareToggle">Compare Companies</label>
+                </div>
+                
+                <div id="singleSearchContainer">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="stockTickerInput" placeholder="Enter Stock Ticker (e.g., AAPL)" aria-label="Stock Ticker">
+                        <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
+                    </div>
+                    <div class="form-text text-muted">Enter a valid stock ticker symbol to get financial data</div>
+                </div>
+                
+                <div id="compareSearchContainer" style="display: none;">
+                    <div id="tickersList">
+                        <div class="input-group mb-2 ticker-input-group">
+                            <input type="text" class="form-control ticker-input" placeholder="Company 1 (e.g., AAPL)" aria-label="Company 1">
+                            <button class="btn btn-outline-danger remove-ticker" type="button"><i class="bi bi-x"></i></button>
+                        </div>
+                        <div class="input-group mb-2 ticker-input-group">
+                            <input type="text" class="form-control ticker-input" placeholder="Company 2 (e.g., MSFT)" aria-label="Company 2">
+                            <button class="btn btn-outline-danger remove-ticker" type="button"><i class="bi bi-x"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <button class="btn btn-outline-secondary btn-sm" id="addTickerBtn">
+                            <i class="bi bi-plus-circle"></i> Add Company
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" id="compareBtn">Compare Companies</button>
+                    <div class="form-text text-muted">Enter 2 or more ticker symbols to compare companies</div>
+                </div>
+                
+                <div class="alert alert-danger mt-3" id="errorMessage" style="display: none;"></div>
+                <div class="text-center my-3" id="loadingIndicator" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted">Loading data...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" style="display: none;">
+            <!-- Company Profile Section -->
+            <section class="card mb-4 data-section" id="companyProfileSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Company Profile</h2>
+                </div>
+                <div class="card-body" id="companyProfileBody">
+                    <!-- Content will be added by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Income Statement Section -->
+            <section class="card mb-4 data-section" id="incomeStatementSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Income Statement</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container mb-4">
+                        <canvas id="incomeStatementChart"></canvas>
+                    </div>
+                    <div id="incomeStatementTableBody">
+                        <!-- Content will be added by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Balance Sheet Section -->
+            <section class="card mb-4 data-section" id="balanceSheetSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Balance Sheet</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container mb-4">
+                        <canvas id="balanceSheetChart"></canvas>
+                    </div>
+                    <div id="balanceSheetTableBody">
+                        <!-- Content will be added by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cash Flow Section -->
+            <section class="card mb-4 data-section" id="cashflowSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Cash Flow</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container mb-4">
+                        <canvas id="cashflowChart"></canvas>
+                    </div>
+                    <div id="cashflowTableBody">
+                        <!-- Content will be added by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Ratios Section -->
+            <section class="card mb-4 data-section" id="keyRatiosSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Key Ratios</h2>
+                </div>
+                <div class="card-body" id="keyRatiosBody">
+                    <!-- Content will be added by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Growth Metrics Section -->
+            <section class="card mb-4 data-section" id="growthMetricsSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Growth Metrics</h2>
+                </div>
+                <div class="card-body" id="growthMetricsBody">
+                    <!-- Content will be added by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Smart AI Analysis Section -->
+            <section class="card mb-4 data-section" id="aiAnalysisSection" style="display: none;">
+                <div class="card-header">
+                    <h2 class="mb-0">Smart AI Analysis</h2>
+                </div>
+                <div class="card-body" id="aiAnalysisBody">
+                    <p class="text-muted"><em>Generating analysis...</em></p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-light text-center text-muted py-3">
+        <div class="container">
+            <p>ValuX Stock Analyzer &copy; 2023 | Data provided by <a href="https://financialmodelingprep.com/" target="_blank" rel="noopener noreferrer">Financial Modeling Prep</a></p>
+            <p class="small">This is a demonstration application. Not financial advice.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html> 
